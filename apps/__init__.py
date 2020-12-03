@@ -1,5 +1,6 @@
 #!-*- coding:utf-8 -*-
 from apps.articie.view import article_bp
+from apps.goods.view import goods_bp
 
 __author__ = 'ALX LIN'
 from flask import Flask
@@ -14,4 +15,5 @@ def create_app():
     #注册蓝图
     app.register_blueprint(user_bp)
     app.register_blueprint(article_bp)
+    app.register_blueprint(goods_bp)
     return app
