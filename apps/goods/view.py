@@ -11,17 +11,27 @@ goods_bp = Blueprint('goods', __name__)
 
 @goods_bp.route('/findgoods')
 def find_goods():
-    pass
+    user_id = request.args.get('uid')
+    user = User.query.get(user_id)
+    return render_template('goods/findfoods.html', user=user)
+
+
 
 @goods_bp.route('/finduser')
 def find_user():
-    pass
+    goods_id = request.args.get('gid')
+    goods = Goods.query.get(goods_id)
+    return render_template('goods/finduser.html', goods=goods)
+
+
 
 @goods_bp.route('/show')
 def show():
     users = User.query.filter(User.isdelete == False).all()
     good_list = Goods.query.all()
     return render_template('goods/show.html', users=users, good_list=good_list)
+
+
 
 @goods_bp.route('/buy')
 def buy():
@@ -34,3 +44,10 @@ def buy():
     db.session.add(ug)
     db.session.commit()
     return '购买成功'
+
+
+@goods_bp.route('/hah')
+def hah():
+    user_id = request.args.get('goodsid')
+    goods = Goods.query.get(user_id)
+    return render_template('goods/huhaha.html', goods=goods)

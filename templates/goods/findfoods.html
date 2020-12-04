@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>根据用户查询所购买的商品</title>
+</head>
+<body>
+用户名：{{ user.username }}
+<br>
+{{ user.username }}购买的商品名：
+{% for good in user.goodslist %}
+    <p>
+        <a href="{{ url_for('goods.hah') }}?goodsid={{ good.id }}">{{ good.gname }}</a> --- {{ good.price }}
+    </p>
+{% endfor %}
+
+</body>
+</html>

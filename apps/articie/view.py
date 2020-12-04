@@ -39,3 +39,9 @@ def article_all1():
     id = request.args.get('id')
     user = User.query.get(id)
     return render_template('article/all1.html', user=user)
+
+@article_bp.route('/find_comment')
+def find_comment():
+    article_id = request.args.get('art_id')
+    article = Article.query.get(article_id)
+    return render_template('article/findcomment.html', article=article)

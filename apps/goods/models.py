@@ -8,6 +8,8 @@ class Goods(db.Model):
     gname = db.Column(db.String(100), nullable=False)
     price = db.Column(db.Float, nullable=False)
     remarks = db.Column(db.String(200))
+    #back reference
+    users = db.relationship('User', backref='goodslist', secondary='user_goods')
 
     def __str__(self):
         return self.gname

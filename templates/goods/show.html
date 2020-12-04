@@ -27,7 +27,7 @@
         {% for good in good_list %}
         <tr>
             <td>{{ loop.index }}</td>
-            <td>{{ good.gname }}</td>
+            <td><a href="{{ url_for('goods.find_user') }}?gid={{ good.id }}">{{ good.gname }}</a></td>
             <td>{{ good.price }}</td>
             <td>
                 <input type="button" class="btnbuy" value="购买" tag="{{ good.id }}"/>
