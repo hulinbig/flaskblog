@@ -7,7 +7,6 @@ from apps.articie.models import *
 from apps.goods.models import *
 app = create_app()
 manager = Manager(app=app)
-
 migrate = Migrate(app=app, db=db)
 manager.add_command('db', MigrateCommand)
 

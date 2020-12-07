@@ -1,0 +1,48 @@
+对于数据库设计，表之间的关系确定，以及关联关系
+
+一对多关系
+
+查找用户下发布了多少文章
+class User(db.model):
+    XXXXXX
+    id = db.Column(db.Integer, primary_Key=True, autoincrement=True)
+    articles = db.relationship('Article', backref='user')
+
+class Article(db.model):
+    XXXXXX
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    #user = db.relationship('User', backref='article')
+
+明确：一个项目肯定会有多张表，确定表与表之间的关系最重要，在开始项目前必须确认表与表的关系
+单独一张表：User是不行的， user要与其他的表建立联系
+
+以student和班级class为例
+一个班级是有多名学生的
+
+----模板
+    --html
+    --js
+    --css
+    --Images
+
+使用flask-bootstrap
+1.安装flask-bootstrap
+2.进行配置：
+    from flask-bootstrap import Bootstrap
+    bootstrap = Bootstrap()
+
+ 在__init__.py 中进行初始化
+ #初始化bootstrap
+ bootstrap.init_app(app=app)
+3.内置的block：
+{% extends "bootstrap/base.html" %}
+
+{% block title %}首页{% endblock %}
+
+{% block navbar %}{% endblock %}
+
+{% block content %} {% endblock %}
+
+{% block srcipts %} {% endblock %}
+{% block head %} {% endblock %}
+{% block body %} {% endblock %}
