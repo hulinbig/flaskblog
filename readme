@@ -46,3 +46,4 @@ class Article(db.model):
 {% block srcipts %} {% endblock %}
 {% block head %} {% endblock %}
 {% block body %} {% endblock %}
+
