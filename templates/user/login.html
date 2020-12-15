@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}
+用户登陆
+{% endblock %}
+
+{% block styles %}
+    <link href="{{bootstrap_find_resource('css/bootstrap.css', cdn='bootstrap')}}" rel="stylesheet">
+    <style>
+        #container{
+        padding-top: 20px;
+        width: 1000px;
+        height: 830px;
+        margin: 0 auto;
+    }
+       #myfoot{
+        border-top: 1px solid darkgreen;
+        font-size: 15px;
+        text-align: center;
+        color: lightblue;
+    }
+        #tips{
+            color: red;
+            font-size: 14px;
+        }
+    </style>
+{% endblock %}
+
+
+{% block newcontent %}
+    <div id="container">
+    <h1>用户登陆</h1>
+    <form class="form-horizontal" action="{{ url_for('user.login') }}" method="post">
+            <p id="tips">{{ msg }} </p>
+  <div class="form-group">
+    <label for="inputUsername" class="col-md-2 control-label">用户名</label>
+    <div class="col-md-4">
+      <input type="text" class="form-control" id="inputUsername" placeholder="请输入用户名" name="username">
+    </div>
+  </div>
+        <div class="form-group">
+    <label for="inputPassword" class="col-md-2 control-label">密码</label>
+    <div class="col-md-4">
+      <input type="password" class="form-control" id="inputPassword" placeholder="请输入密码" name="password">
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-default">登陆</button>
+    </div>
+  </div>
+</form>
+    </div>
+{% endblock %}
