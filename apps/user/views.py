@@ -1,6 +1,6 @@
 #!-*- coding:utf-8 -*-
 __author__ = 'ALX LIN'
-from flask import Blueprint, request, render_template, redirect, url_for, jsonify
+from flask import Blueprint, request, render_template, redirect, url_for, jsonify, session
 from apps.user.models import User
 from exts import db
 import hashlib
@@ -9,7 +9,15 @@ user_bp1 = Blueprint('user', __name__, url_prefix='/user')
 
 @user_bp1.route('/')
 def index():
-    return render_template('user/index.html')
+    #1.cookie获取方式
+    # uid = request.cookies.get('uid', None)
+    #2.session的获取,session底层默认获取
+    uid = session.get('uid')
+    if uid:
+        user = User.query.get(uid)
+        return render_template('user/index.html', user=user)
+    else:
+        return render_template('user/index.html')
 
 @user_bp1.route('/register', methods=['POST', 'GET'])
 def register():
@@ -29,7 +37,7 @@ def register():
             db.session.commit()
             return redirect(url_for('user.index'))
         else:
-            return '二次密码不一致'
+            return '二次密码不一致,请重新输入'
     return render_template('user/register.html')
 
 @user_bp1.route('/checkphone', methods=['POST', 'GET'])
@@ -51,16 +59,24 @@ def login():
         password = hashlib.md5(request.form.get('password').encode('utf-8')).hexdigest()
         user_list = User.query.filter_by(username=username)
         us = User.query.filter(User.username ==username)
-        for u in user_list:
-            if u.password == password:
+        for user in user_list:
+            if user.password == password:
+                #1.cookie实现机制
+                # response = redirect(url_for('user.index'))
+                # response.set_cookie('uid', str(u.id), max_age=3600)
+                # return response
+                #2.session实现机制
+                session['uid'] = user.id
                 return redirect(url_for('user.index'))
-
-
-
             else:
                 return render_template('user/login.html', msg='用户名或密码错误')
     return render_template('user/login.html')
 
-@user_bp1.route('/test')
-def test():
-    return render_template('user/hah.html')
+
+@user_bp1.route('/logout')
+def logout():
+    response = redirect(url_for('user.index'))
+    # #通过response对象的delete_cookie(key),key就是要删除的cookie的key
+    # response.delete_cookie('uid')
+    del session['uid']
+    return response

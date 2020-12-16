@@ -47,3 +47,33 @@ class Article(db.model):
 {% block head %} {% endblock %}
 {% block body %} {% endblock %}
 
+会话机制：
+1.cookie方式：
+    保存：通过response对象保存。
+    response = redirect(XXX)
+    response = render_template()
+    response = Response()
+    response = make_response()
+    response = jsonify()
+    #通过对象调用方法
+    response.set_cookie(key,value,max_age)
+
+    获取：
+        通过request对象获取
+        request.form.get()
+        request.args.get()
+        cookie也在request对象中
+        request.cookies.get(key) ---->> value
+
+     删除：
+        通过response对象删除。把浏览器中的key=value删除
+         response = redirect(XXX)
+        response = render_template()
+        response = Response()
+        response = make_response()
+        response = jsonify()
+        #通过对象调用方法
+        response.delete_cookie(key,value,max_age)
+
+2.session
+    是在服务器端进行用户信息的保存。一个字典

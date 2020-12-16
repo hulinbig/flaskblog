@@ -7,6 +7,7 @@ class Config:
     SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:123456@localhost:3306/blog"   #这里只能用localhost，不能用本家地址127.0.0.1
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True
+    SECRET_KEY = 'sdfdsfsdfsefsdf12fsdf'
 
 class DevelopmentConfig(Config):
     ENV = 'development'
