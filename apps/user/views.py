@@ -75,8 +75,15 @@ def login():
 
 @user_bp1.route('/logout')
 def logout():
-    response = redirect(url_for('user.index'))
+    #1.cookie的方式
+    # response = redirect(url_for('user.index'))
     # #通过response对象的delete_cookie(key),key就是要删除的cookie的key
     # response.delete_cookie('uid')
-    del session['uid']
-    return response
+    #2.session的方式
+    # del session['uid'] #用户退出后，开辟的session的空间不会被清除
+    session.clear()#用户退出后，将开辟的session的空间一起删除，净删除
+    return redirect(url_for('user.index'))
+
+@user_bp1.route('/sendMsg')
+def send_message():
+    pass

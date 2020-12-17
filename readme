@@ -77,3 +77,37 @@ class Article(db.model):
 
 2.session
     是在服务器端进行用户信息的保存。一个字典
+注意：
+使用session必须要设置配置文件，在配置文件中添加 SECRET_KEY='xxxxxx',
+添加SECRET_KEY的目的就是用于sessionid的加密。如果不设置会报错
+    设置：
+    如果要使用session，需要直接导入
+    from flask import session
+
+    把session当成字典使用，因此：session[key]=value
+    就会将key=value保存到session的内存空间
+    ****并会在响应的时候自动在response中自动添加有一个cookie：session=加密后的id****
+ 获取
+ 用户请求页面的时候就会携带上次保存在客户端浏览器的cookie值，其中包含session=加密后的id
+ 获取session值的话通过session直接获取，因为session是一个字典，就可以采用字典的方式获取即可。
+ value = session[key] 或者 value = session.get(key)
+ 这个时候大家可能会考虑携带的cookie怎么用的？？？
+ 其实是如果使用session获取内容，底层会自动获取cookie中的session id值
+ 进行查找并找到对应的session空间
+
+ 删除
+ session.clear() 删除session的内存空间和删除cookie
+ del session[key] 只会删除session中的这个键值对，不会删除session空间和cookie
+
+flask-bootstrap 加密，注册使用
+generate_password_hash(password)  ----> 加密 默认长度超过64位
+
+检查加密密码是否一样,一般登陆的时候使用
+check_password_hash(pwdHash, password)   ----> bool:False,True
+
+cookie 和 session
+1.相同的是都是为了存储用户信息的
+2.不同的是cookie是存在本地。session是存在服务器：优点 不容易被窃取 ，缺点 占用服务器资源。解决方式：加缓存 redis
+
+
+
