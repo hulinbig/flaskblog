@@ -55,21 +55,39 @@ def check_phone():
 @user_bp1.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = hashlib.md5(request.form.get('password').encode('utf-8')).hexdigest()
-        user_list = User.query.filter_by(username=username)
-        us = User.query.filter(User.username ==username)
-        for user in user_list:
-            if user.password == password:
-                #1.cookie实现机制
-                # response = redirect(url_for('user.index'))
-                # response.set_cookie('uid', str(u.id), max_age=3600)
-                # return response
-                #2.session实现机制
-                session['uid'] = user.id
-                return redirect(url_for('user.index'))
+        f = int(request.args.get('f'))#用户名或密码
+        if f == 1:
+            username = request.form.get('username')
+            password = hashlib.md5(request.form.get('password').encode('utf-8')).hexdigest()
+            user_list = User.query.filter_by(username=username)
+            us = User.query.filter(User.username ==username)
+            for user in user_list:
+                if user.password == password:
+                    #1.cookie实现机制
+                    # response = redirect(url_for('user.index'))
+                    # response.set_cookie('uid', str(u.id), max_age=3600)
+                    # return response
+                    #2.session实现机制
+                    session['uid'] = user.id
+                    return redirect(url_for('user.index'))
+                else:
+                    return render_template('user/login.html', msg='用户名或密码错误')
+        elif f =='2':#手机号码于验证码
+            phone = request.form.get('phone')
+            code = request.form.get('code')
+            #先去验证验证码
+            valid_code = session.get(phone)
+            if code == valid_code:
+                #查询数据库
+                user = User.query.filter(User.phone == phone).first()
+                if user:
+                    #登陆成功
+                    session['uid'] = user.id
+                    return redirect(url_for('user.index.html'))
+                else:
+                    return render_template('user/login.html', msg='此号码未注册')
             else:
-                return render_template('user/login.html', msg='用户名或密码错误')
+                return render_template('user/login.html', msg='验证码有误！')
     return render_template('user/login.html')
 
 
