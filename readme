@@ -110,4 +110,25 @@ cookie 和 session
 2.不同的是cookie是存在本地。session是存在服务器：优点 不容易被窃取 ，缺点 占用服务器资源。解决方式：加缓存 redis
 
 
+--12-23---
+1.短信息发送：
 
+
+2.登陆权限的验证
+只要走center路由，判断用户是否是登陆状态，如果用户登陆了，
+则自动跳转到登陆页面进行登陆，登陆之后才可以进行查看。
+
+钩子函数：
+直接应用在app上：
+before_first_request
+before_request
+after_request
+teardown_request
+
+应用到蓝图:
+before_app_first_request
+before_app_request
+after_app_request
+teardown_app_request
+
+3.

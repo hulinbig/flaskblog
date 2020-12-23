@@ -1,11 +1,41 @@
 #!-*- coding:utf-8 -*-
 __author__ = 'ALX LIN'
-from flask import Blueprint, request, render_template, redirect, url_for, jsonify, session
+from flask import Blueprint, request, render_template, redirect, url_for, jsonify, session, g
 from apps.user.models import User
 from exts import db
 import hashlib
 from sqlalchemy import or_,and_
 user_bp1 = Blueprint('user', __name__, url_prefix='/user')
+
+required_login_list = ['/user/center', '/user/update']
+#flask钩子函数
+@user_bp1.before_app_first_request
+def first_request():
+    print('before_app+first_request')
+
+#重点
+@user_bp1.before_app_request
+def before_request1():
+    print('before_request1before_request1', request.path)
+    if request.path in required_login_list:
+        id =session.get('uid')
+        if not id:
+            return render_template('user/login.html')
+        else:
+            user = User.query.get(id)
+            #g对象，本次请求的对象
+            g.user = user
+
+@user_bp1.after_app_request
+def after_request_test(response):
+    response.set_cookie('a', 'bbb', max_age=19)
+    print('after_request_test')
+    return response
+
+@user_bp1.teardown_app_request
+def teardown_request(response):
+    print('teardown_request_test')
+
 
 @user_bp1.route('/')
 def index():
@@ -105,3 +135,33 @@ def logout():
 @user_bp1.route('/sendMsg')
 def send_message():
     pass
+
+#用户中心
+@user_bp1.route('/center')
+def user_center():
+    # id = session.get('uid')
+    # user = User.query.get(id)
+    return render_template('user/center.html', user=g.user)
+
+#修改用户信息
+@user_bp1.route('/update',methods=['POST', 'GET'])
+def update_user():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        phone = request.form.get('phone')
+        print('dd', phone, type(phone))
+        email = request.form.get('email')
+        #只要有图片，获取方式必须使用request.files.get(name)
+        icon = request.files.get('icon')
+        #查询手机号码
+        users = User.query.all()
+        for user in users:
+            if user.phone == phone:
+                #说明数据中已经有人注册此号码
+                return render_template('user/center.html', user=g.user, msg='此号码已被注册不能使用')
+        g.user.username = username
+        g.user.phone = phone
+        g.user.email = email
+        db.session.commit()
+        # session.clear()  # 用户修改后，可退出登陆
+        return redirect(url_for('user.index'))
