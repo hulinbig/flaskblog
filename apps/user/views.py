@@ -7,13 +7,13 @@ import hashlib
 from sqlalchemy import or_,and_
 user_bp1 = Blueprint('user', __name__, url_prefix='/user')
 
-required_login_list = ['/user/center', '/user/update']
+required_login_list = ['/user/center', '/user/update', '/user/publish']
 #flask钩子函数
 @user_bp1.before_app_first_request
 def first_request():
     print('before_app+first_request')
 
-#重点
+#重点****************
 @user_bp1.before_app_request
 def before_request1():
     print('before_request1before_request1', request.path)
@@ -165,3 +165,9 @@ def update_user():
         db.session.commit()
         # session.clear()  # 用户修改后，可退出登陆
         return redirect(url_for('user.index'))
+    return render_template('user/center.html', user=g.user)
+
+
+
+
+
