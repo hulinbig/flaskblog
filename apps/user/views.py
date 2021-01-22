@@ -1,4 +1,10 @@
 #!-*- coding:utf-8 -*-
+import os
+
+from werkzeug.utils import secure_filename
+
+from setting import Config
+
 __author__ = 'ALX LIN'
 from flask import Blueprint, request, render_template, redirect, url_for, jsonify, session, g
 from apps.user.models import User
@@ -143,6 +149,7 @@ def user_center():
     # user = User.query.get(id)
     return render_template('user/center.html', user=g.user)
 
+ALLOWED_EXTENSIONS = ['jpg', 'png', 'gif', 'jpre']
 #修改用户信息
 @user_bp1.route('/update',methods=['POST', 'GET'])
 def update_user():
@@ -153,19 +160,35 @@ def update_user():
         email = request.form.get('email')
         #只要有图片，获取方式必须使用request.files.get(name)
         icon = request.files.get('icon')
+        # print(icon)
         #查询手机号码
-        users = User.query.all()
-        for user in users:
-            if user.phone == phone:
-                #说明数据中已经有人注册此号码
-                return render_template('user/center.html', user=g.user, msg='此号码已被注册不能使用')
-        g.user.username = username
-        g.user.phone = phone
-        g.user.email = email
-        db.session.commit()
-        # session.clear()  # 用户修改后，可退出登陆
-        return redirect(url_for('user.index'))
-    return render_template('user/center.html', user=g.user)
+        # users = User.query.all()
+        # for user in users:
+        #     if user.phone == phone:
+        #         #说明数据中已经有人注册此号码
+        #         return render_template('user/center.html', user=g.user, msg='此号码已被注册不能使用')
+        #属性：filename 用户获取文件的名字
+        #方法：save(保存路径)
+        icon_name = icon.filename
+        suffix = icon_name.rsplit('.')[-1]
+        if suffix in ALLOWED_EXTENSIONS:
+            icon_name = secure_filename(icon_name) #保证文件名是符合python的命名规则
+            file_path = os.path.join(Config.UPLOAD_ICON_DIR, icon_name)
+            icon.save(file_path)
+            #保存成功
+            g.user.username = username
+            g.user.phone = phone
+            g.user.email = email
+            path = 'upload/icon/'  #最后要加/，否则拼接出来的是反斜杠
+            g.user.icon = os.path.join(path, icon_name)
+            print('----------------------------------------------------------', g.user.icon)
+            db.session.commit()
+            # session.clear()  # 用户修改后，可退出登陆
+            return redirect(url_for('user.user_center'))
+        else:
+            return render_template('user/center.html', user=g.user, msg='上传文件格式错误：请上传后缀为jpg, png, gif, jpre的文件')
+    else:
+        return render_template('user/center.html', user=g.user)
 
 
 
