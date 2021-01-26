@@ -2,6 +2,7 @@
 from flask_bootstrap import Bootstrap
 
 from apps.articie.view import article_bp
+from apps.articie.views import article_bp1
 from apps.goods.view import goods_bp
 from apps.user.views import user_bp1
 
@@ -19,7 +20,7 @@ def create_app():
     bootstrap.init_app(app=app)
     #注册蓝图
     # app.register_blueprint(user_bp)
-    # app.register_blueprint(article_bp)
+    app.register_blueprint(article_bp1)
     # app.register_blueprint(goods_bp)
     app.register_blueprint(user_bp1)
     print(app.url_map)

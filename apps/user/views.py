@@ -3,6 +3,7 @@ import os
 
 from werkzeug.utils import secure_filename
 
+from apps.articie.models import Article_type
 from setting import Config
 
 __author__ = 'ALX LIN'
@@ -13,7 +14,7 @@ import hashlib
 from sqlalchemy import or_,and_
 user_bp1 = Blueprint('user', __name__, url_prefix='/user')
 
-required_login_list = ['/user/center', '/user/update', '/user/publish']
+required_login_list = ['/user/center', '/user/update', '/user/publish', '/article/publish']
 #flask钩子函数
 @user_bp1.before_app_first_request
 def first_request():
@@ -147,12 +148,13 @@ def send_message():
 def user_center():
     # id = session.get('uid')
     # user = User.query.get(id)
-    return render_template('user/center.html', user=g.user)
+    types = Article_type.query.all()
+    return render_template('user/center.html', user=g.user, types=types)
 
 ALLOWED_EXTENSIONS = ['jpg', 'png', 'gif', 'jpre']
 #修改用户信息
 @user_bp1.route('/update',methods=['POST', 'GET'])
-def update_user():
+def user_change():
     if request.method == 'POST':
         username = request.form.get('username')
         phone = request.form.get('phone')
@@ -172,7 +174,7 @@ def update_user():
         icon_name = icon.filename
         suffix = icon_name.rsplit('.')[-1]
         if suffix in ALLOWED_EXTENSIONS:
-            icon_name = secure_filename(icon_name) #保证文件名是符合python的命名规则
+            icon_name = secure_filename(icon_name) #保证文件名是符合python的命名规则,python的命名规则
             file_path = os.path.join(Config.UPLOAD_ICON_DIR, icon_name)
             icon.save(file_path)
             #保存成功

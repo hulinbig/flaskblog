@@ -30,11 +30,15 @@
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">文章分类 <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="#">程序人生</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">随笔</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">喜欢的动漫</a></li>
+              {% for type in types %}
+                  {% if not loop.last  %} # loop.last 判断for循环至最后一个
+                    <li><a href="#">{{ type.type_name }}</a></li>
+                    <li role="separator" class="divider"></li>
+                  {% else %}
+                      <li><a href="#">{{ type.type_name }}</a></li>
+                  {% endif %}
+              {% endfor %}
+
           </ul>
         </li>
           <li><a href="#">我的相册</a></li>
@@ -48,6 +52,10 @@
       </form>
       <ul class="nav navbar-nav navbar-right">
           {% if user %}
+              <li><img
+                      src="{% if user.icon %}{{ url_for('static', filename=user.icon) }} {% else %} {{ url_for('static', filename='images/tuxiang.jpg') }}{% endif %}"
+                        alt="" width="30" height="30" style="border-radius: 15px; margin-top: 9px">
+              </li>
                   <li class="dropdown">
                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">欢迎 {{ user.username }} <span class="caret"></span></a>
                     <ul class="dropdown-menu">
