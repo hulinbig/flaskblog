@@ -3,7 +3,7 @@ import os
 
 from werkzeug.utils import secure_filename
 
-from apps.articie.models import Article_type
+from apps.article.models import Article_type, Article
 from setting import Config
 
 __author__ = 'ALX LIN'
@@ -43,6 +43,11 @@ def after_request_test(response):
 def teardown_request(response):
     print('teardown_request_test')
 
+#自定义过滤器
+@user_bp1.app_template_filter('cdecode')
+def content_decode(content):
+    content = content.decode('utf-8')
+    return content[:50]#显示多少字符
 
 @user_bp1.route('/')
 def index():
@@ -50,11 +55,16 @@ def index():
     # uid = request.cookies.get('uid', None)
     #2.session的获取,session底层默认获取
     uid = session.get('uid')
+    #获取文章列表,按照创建时间进行倒序排列
+    articles = Article.query.order_by(Article.pdatatime.desc()).all()
+    #获取分类列表
+    types = Article_type.query.all()
+    #判断用户是否登陆
     if uid:
         user = User.query.get(uid)
-        return render_template('user/index.html', user=user)
+        return render_template('user/index.html', user=user, articles=articles, types=types)
     else:
-        return render_template('user/index.html')
+        return render_template('user/index.html', articles=articles, types=types)
 
 @user_bp1.route('/register', methods=['POST', 'GET'])
 def register():

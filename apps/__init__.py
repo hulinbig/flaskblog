@@ -1,8 +1,8 @@
 #!-*- coding:utf-8 -*-
 from flask_bootstrap import Bootstrap
 
-from apps.articie.view import article_bp
-from apps.articie.views import article_bp1
+from apps.article.view import article_bp
+from apps.article.views import article_bp1
 from apps.goods.view import goods_bp
 from apps.user.views import user_bp1
 

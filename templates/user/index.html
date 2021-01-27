@@ -13,7 +13,7 @@
      .article{
          width: 1000px;
          background-color: darkseagreen;
-         height: 80px;
+         height: 130px;
          margin-bottom: 20px;
          border-bottom: 1px solid gray;
      }
@@ -24,14 +24,22 @@
 
 {% block newcontent %}
     <div id="container">
-        <div class="article"> </div>
-        <div class="article"> </div>
-        <div class="article"> </div>
-        <div class="article"> </div>
-        <div class="article"> </div>
-        <div class="article"> </div>
-        <div class="article"> </div>
-        <div class="article"> </div>
-        <div class="article"> </div>
+        {% for article in articles %}
+             <div class="article">
+                <h4><a href="">{{ article.title }}</a></h4>
+             <p>
+                 <span>作者: {{ article.user.username }}</span>
+                 <br>
+                 <br>
+                 <span>{{ article.content | cdecode | safe }}</span>
+             </p>
+             <div>
+                 <span style="margin-left: 0">发布时间:{{ article.pdatatime }}</span>
+                 <span>收藏:{{ article.save_num }}</span>
+                 <span>点击量:{{ article.click_num }}</span>
+                 <span>点赞量:{{ article.love_num }}</span>
+             </div>
+             </div>
+        {% endfor %}
     </div>
 {% endblock %}
