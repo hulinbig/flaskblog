@@ -14,7 +14,8 @@ import hashlib
 from sqlalchemy import or_,and_
 user_bp1 = Blueprint('user', __name__, url_prefix='/user')
 
-required_login_list = ['/user/center', '/user/update', '/user/publish', '/article/publish']
+#验证用户的登陆权限
+required_login_list = ['/user/center', '/user/update', '/user/publish', '/article/publish', '/article/detail']
 #flask钩子函数
 @user_bp1.before_app_first_request
 def first_request():
@@ -55,16 +56,30 @@ def index():
     # uid = request.cookies.get('uid', None)
     #2.session的获取,session底层默认获取
     uid = session.get('uid')
+    #接收页码数
+    page = request.args.get('page', 1)
+    if page == 'None':
+        page = 1
+    else:
+        page = int(page)
     #获取文章列表,按照创建时间进行倒序排列
-    articles = Article.query.order_by(Article.pdatatime.desc()).all()
+    pagination = Article.query.order_by(Article.pdatatime.desc()).paginate(page=page, per_page=5)
+    print(pagination.items) #[<Article 9>, <Article 8>, <Article 4>] 拿到当前页的数据
+    print(pagination.page)  #当前的页码数
+    print(pagination.prev_num) #当前页的前一页页码数`
+    print(pagination.next_num) #当前页的后一页页码数
+    print(pagination.has_next) #bool 类型  判断是否有后一页
+    print(pagination.has_prev)#bool 类型  判断是否有前一页
+    print(pagination.pages) #总共有几页
+    print(pagination.total) #总的记录条数
     #获取分类列表
     types = Article_type.query.all()
     #判断用户是否登陆
     if uid:
         user = User.query.get(uid)
-        return render_template('user/index.html', user=user, articles=articles, types=types)
+        return render_template('user/index.html', user=user, types=types, pagination=pagination)
     else:
-        return render_template('user/index.html', articles=articles, types=types)
+        return render_template('user/index.html', types=types, pagination=pagination)
 
 @user_bp1.route('/register', methods=['POST', 'GET'])
 def register():
@@ -161,7 +176,7 @@ def user_center():
     types = Article_type.query.all()
     return render_template('user/center.html', user=g.user, types=types)
 
-ALLOWED_EXTENSIONS = ['jpg', 'png', 'gif', 'jpre']
+ALLOWED_EXTENSIONS = ['jpg', 'png', 'gif']
 #修改用户信息
 @user_bp1.route('/update',methods=['POST', 'GET'])
 def user_change():
@@ -198,7 +213,7 @@ def user_change():
             # session.clear()  # 用户修改后，可退出登陆
             return redirect(url_for('user.user_center'))
         else:
-            return render_template('user/center.html', user=g.user, msg='上传文件格式错误：请上传后缀为jpg, png, gif, jpre的文件')
+            return render_template('user/center.html', user=g.user, msg='上传文件格式错误：请上传后缀为jpg, png, gif的文件')
     else:
         return render_template('user/center.html', user=g.user)
 

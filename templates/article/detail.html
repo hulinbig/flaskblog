@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}
+    文章详情
+{% endblock %}
+{% block styles %}
+    {{ super() }}
+    <style>
+      #container {
+         width: 1000px;
+         margin: 0 auto;
+     }
+         .detail{
+         width: 1000px;
+         background-color: darkseagreen;
+         height: 800px;
+         margin-bottom: 20px;
+         border-bottom: 1px solid gray;
+     }
+    #left{
+        float: left;
+    }
+    #right{
+        float: right;
+    }
+    #container p{
+        overflow:auto;
+         margin-top: 20px;
+    }
+
+    </style>
+{% endblock %}
+
+{% block newcontent %}
+    <div id="container">
+        <div id="detail" class="detail">
+            <h2>{{ article.title }}</h2>
+            <p>
+                <div id="left">
+                发表作者:{{ article.user.username }} &nbsp;&nbsp;&nbsp;&nbsp;
+                发布时间：{{ article.pdatatime}}
+                </div>
+                <div id="right">
+                    &nbsp;&nbsp;<span class="glyphicon glyphicon-heart" aria-hidden="true"></span>&nbsp; <span tag="0">{{ article.save_num }}</span>
+                    &nbsp;&nbsp;
+                    <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>&nbsp;<span tag="0">{{ article.love_num }}</span>
+                    &nbsp;&nbsp;
+                </div>
+            </p>
+            <div>
+                {{ article.content | adecode | safe }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+    <script>
+    $(function () {
+        //收藏
+        $('.glyphicon-heart').click(function(){
+            let $this = $(this);
+            let tag = $this.next('span').attr('tag');
+            $.get('{{ url_for('article.article_save') }}', {aid:{{article.id}},tag:tag}, function(data){
+              $this.next('span').text(data.num);
+            });
+             if (tag == 1){
+                  $this.css({'color':'black'});
+                  $this.next('span').attr('tag', '0');
+              }else {
+                 $this.css({'color': 'red'});
+                 $this.next('span').attr('tag', '1');
+             }
+        });
+        //点赞
+          $('.glyphicon-thumbs-up').click(function(){
+              let $this = $(this);
+              let tag = $this.next('span').attr('tag');
+              $.get('{{ url_for('article.article_love') }}', {aid:{{article.id}},tag:tag}, function(data){
+                  $this.next('span').text(data.num);
+                  });
+              if (tag == 1){
+                  $this.css({'color':'black'});
+                  $this.next('span').attr('tag', '0');
+              }else {
+                  $this.css({'color':'red'});
+                  $this.next('span').attr('tag', '1');
+              }
+        });
+    })
+    </script>
+{% endblock %}

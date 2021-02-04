@@ -1,6 +1,7 @@
 #!-*- coding:utf-8 -*-
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, jsonify
 
+from apps.article.models import Article
 from apps.goods.models import Goods, User_goods
 from apps.user.models import User
 from exts import db
@@ -47,3 +48,5 @@ def hah():
     user_id = request.args.get('goodsid')
     goods = Goods.query.get(user_id)
     return render_template('goods/huhaha.html', goods=goods)
+
+
