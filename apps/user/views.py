@@ -15,7 +15,7 @@ from sqlalchemy import or_,and_
 user_bp1 = Blueprint('user', __name__, url_prefix='/user')
 
 #验证用户的登陆权限
-required_login_list = ['/user/center', '/user/update', '/user/publish', '/article/publish', '/article/detail']
+required_login_list = ['/user/center', '/user/update', '/user/publish', '/article/publish', '/article/detail', '/article/article_find',]
 #flask钩子函数
 @user_bp1.before_app_first_request
 def first_request():
