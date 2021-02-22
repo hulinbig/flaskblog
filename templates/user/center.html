@@ -13,8 +13,8 @@
         <div id="left">
             <p>用户信息修改</p>
             <p>发表文章</p>
-            <p>管理相册</p>
             <p>管理留言</p>
+            <p>管理相册</p>
             <p>关于我设置</p>
         </div>
         <div id="right">
@@ -56,6 +56,35 @@
             </form>
         </div>
         <div class="right1" style="background-color: #00ff80"></div>
+         <div class="right1">
+               <form action="{{ url_for('user.upload_photo') }}" method="post" enctype="multipart/form-data"
+                      class="form-inline">
+                    <input type="file" name="photo" class="form-control">
+                    <input type="submit" value="上传相册" class="btn btn-default">
+                </form>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h3>我的相册</h3>
+                        <div class="row">
+                            <p>{% for photo in photos %}
+                                <div class="col-xs-8 col-sm-4">
+                                     <img src="{% if photo.photo_name %}{{ url_for('static', filename=photo.photo_name) }}
+                                    {% else %} {{ url_for('static', filename='images/tuxiang.jpg') }}
+                                    {% endif %}"
+                                    alt="" width="90" height="100">
+                                    <button class="btn btn-info btn-xs photo-del" tag="{{ photo.id }}">删除</button>
+                                </div>
+                            {% endfor %}
+                                </p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
         <div class="right1" style="background-color: darkgreen"></div>
         <div class="right1" style="padding-top: 30px">
             <form action="{{ url_for('user.user_change') }}" method="post" enctype="multipart/form-data">

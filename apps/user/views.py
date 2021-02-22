@@ -8,14 +8,14 @@ from setting import Config
 
 __author__ = 'ALX LIN'
 from flask import Blueprint, request, render_template, redirect, url_for, jsonify, session, g
-from apps.user.models import User
+from apps.user.models import User, Photo
 from exts import db
 import hashlib
 from sqlalchemy import or_,and_
 user_bp1 = Blueprint('user', __name__, url_prefix='/user')
 
 #验证用户的登陆权限
-required_login_list = ['/user/center', '/user/update', '/user/publish', '/article/publish', '/article/detail', '/article/article_find',]
+required_login_list = ['/user/center', '/user/update', '/user/publish', '/article/publish', '/article/detail', '/article/article_find','/user/upload_photo', '/user/del_photo', '/user/del_photo']
 #flask钩子函数
 @user_bp1.before_app_first_request
 def first_request():
@@ -174,7 +174,8 @@ def user_center():
     # id = session.get('uid')
     # user = User.query.get(id)
     types = Article_type.query.all()
-    return render_template('user/center.html', user=g.user, types=types)
+    photos = Photo.query.order_by(Photo.photo_datetime.desc()).filter_by(user_id=g.user.id).all()
+    return render_template('user/center.html', user=g.user, types=types, photos=photos)
 
 ALLOWED_EXTENSIONS = ['jpg', 'png', 'gif']
 #修改用户信息
@@ -218,6 +219,48 @@ def user_change():
         return render_template('user/center.html', user=g.user)
 
 
+#上传照片
+@user_bp1.route('/upload_photo', methods=['POST', 'GET'])
+def upload_photo():
+    if request.method == 'POST':
+        photo = request.files.get('photo')
+        print('--------------',photo)
+        photo_name = photo.filename
+        print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', photo_name)
+        suffix = photo_name.rsplit('.')[-1]
+        if suffix in ALLOWED_EXTENSIONS:
+            photo_name = secure_filename(photo_name)  # 保证文件名是符合python的命名规则,python的命名规则
+            file_path = os.path.join(Config.UPLOAD_PHOTO_DIR, photo_name)
+            photo.save(file_path)
+            # 保存成功
+            path = 'upload/photo/'  # 最后要加/，否则拼接出来的是反斜杠
+            sphone = Photo()
+            sphone.photo_name = os.path.join(path, photo_name)
+            sphone.user_id = g.user.id
+            db.session.add(sphone)
+            db.session.commit()
+            return redirect(url_for('user.user_center'))
+        else:
+            return render_template('user/center.html', user=g.user, msg='上传文件格式错误：请上传后缀为jpg, png, gif的文件')
+    else:
+        return render_template('user/center.html', user=g.user)
 
+#删除图片
+@user_bp1.route('/del_photo')
+def del_photo():
+    pid = request.args.get('pid')
+    photo = Photo.query.get(pid)
+    db.session.delete(photo)
+    db.session.commit()
+    return redirect(url_for('user.user_center'))
 
-
+#获取图片列表
+@user_bp1.route('/myphoto')
+def myphoto():
+    page = int(request.args.get('page', 1))
+    photos = Photo.query.paginate(page=page, per_page=3)
+    user_id = session.get('uid')
+    user = None
+    if user_id:
+        user = User.query.get(user_id)
+    return render_template('user/photo.html', photos=photos, user=user)

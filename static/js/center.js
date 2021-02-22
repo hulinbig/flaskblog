@@ -44,5 +44,16 @@ $(function () {
             $('.right1').eq(i).show();
         });
     });
+    //相册图片的删除
+    $('.photo-del').click(function(){
+        console.log('--------->');
+        flag = confirm('您确定删除此图片吗');
+        //获取图片的属性值 tag属性的值就是图片的主键
+        if (flag){
+            let pid = $(this).attr('tag');
+            //1. ajax. 2.location.href
+            location.href = '/user/del_photo?pid=' + pid;
+        }
 
+    });
 })
