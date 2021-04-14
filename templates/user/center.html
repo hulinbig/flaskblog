@@ -55,7 +55,21 @@
                 </p>
             </form>
         </div>
-        <div class="right1" style="background-color: #00ff80"></div>
+        <div class="right1"  style="padding-top: 20px">
+             <form action="{{ url_for('article.publish_article') }}" method="post">
+                <p><input type="text" class="form-control" id="InputTitle" name="title" placeholder="请输入留言问题标题"></p>
+                <p>
+                    <textarea name="content" class="mytextarea">
+
+                    </textarea>
+                </p>
+                <p></p>
+                <p style="text-align: right">
+                    <button type="submit" class="btn btn-primary">发表留言</button>
+                </p>
+            </form>
+
+        </div>
          <div class="right1">
                <form action="{{ url_for('user.upload_photo') }}" method="post" enctype="multipart/form-data"
                       class="form-inline">
@@ -81,9 +95,6 @@
                     </div>
                 </div>
             </div>
-
-
-
 
         <div class="right1" style="background-color: darkgreen"></div>
         <div class="right1" style="padding-top: 30px">

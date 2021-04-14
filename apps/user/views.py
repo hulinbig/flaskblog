@@ -15,7 +15,10 @@ from sqlalchemy import or_,and_
 user_bp1 = Blueprint('user', __name__, url_prefix='/user')
 
 #验证用户的登陆权限
-required_login_list = ['/user/center', '/user/update', '/user/publish', '/article/publish', '/article/detail', '/article/article_find','/user/upload_photo', '/user/del_photo', '/user/del_photo']
+required_login_list = ['/user/center', '/user/update', '/user/publish',
+                       '/article/publish', '/article/detail', '/article/article_find',
+                       '/user/upload_photo', '/user/del_photo', '/user/del_photo',
+                       '/article/add_comment']
 #flask钩子函数
 @user_bp1.before_app_first_request
 def first_request():
@@ -257,10 +260,14 @@ def del_photo():
 #获取图片列表
 @user_bp1.route('/myphoto')
 def myphoto():
+    # 获取文章分类
+    types = Article_type.query.all()
     page = int(request.args.get('page', 1))
     photos = Photo.query.paginate(page=page, per_page=3)
     user_id = session.get('uid')
     user = None
     if user_id:
         user = User.query.get(user_id)
-    return render_template('user/photo.html', photos=photos, user=user)
+    return render_template('user/photo.html', photos=photos, user=user, types=types)
+
+

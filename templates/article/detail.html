@@ -49,6 +49,62 @@
             <div>
                 {{ article.content | adecode | safe }}
             </div>
+             <hr>
+            <div id="comment">
+                <p>文章评论:</p>
+                <div>
+                    <form action="{{ url_for('article.article_comment') }}" method="post">
+                        <input type="hidden" name="aid" value="{{ article.id }}">
+                        <p>
+                    <textarea name="comment" class="form-control" style="width: 60%" rows="5" cols="60">写下你想说的，开始我们的对话</textarea>
+                        </p>
+                        <p><input type="submit" value="评论" class="btn btn-info"></p>
+                    </form>
+                </div>
+                <p style="margin: 20px 5px; border-bottom: 1px solid lightgray">
+
+                </p>
+                <div id="comment_item">
+                    {% if article.comments %}
+                        {% for comment in article.comments %}
+                            <div class="item">
+                                <div id="item_left">
+                                    <img src=" {% if comment.user.icon %} {{ url_for('static',filename=comment.user.icon) }} {% else %}{{ url_for('static',filename='images/tuxiang.jpg') }}{% endif %}"
+                                         alt="">
+                                </div>
+                                <div id="item_right">
+                                    <p>
+                                        <span>{{ comment.user.username }}</span>
+                                        <span>{{ comment.cdatatime }}</span>
+                                    </p>
+                                    <p>
+                                        {{ comment.comment }}
+                                    </p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="item">
+                            当前文章还没有任何评论，赶快发表意见吧～～～～
+                        </div>
+                    {% endif %}
+                </div>
+                <div id="paginate">
+                    <nav aria-label="...">
+                        <ul class="pager">
+                            <li class="previous {% if not comments.has_prev %}disabled{% endif %}"><a
+                                    href="{{ url_for('article.article_detail') }}?page={{ comments.prev_num }}&aid={{ article.id }}"><span
+                                    aria-hidden="true">&larr;</span> 上一页</a></li>
+
+                            <li class="next {% if not comments.has_next %}disabled {% endif %}"><a
+                                    href="{{ url_for('article.article_detail') }}?page={{ comments.next_num }}&aid={{ article.id }}">下一页
+                                <span
+                                        aria-hidden="true">&rarr;</span></a></li>
+                        </ul>
+                    </nav>
+
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
